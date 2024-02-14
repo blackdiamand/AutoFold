@@ -268,7 +268,7 @@ class ManifoldAPI():
 	 
 		future = Future()
 	
-		self._reads_queue.put(("/v0/user/{username}", "GET", None, future))
+		self._reads_queue.put((f"/v0/user/{username}", "GET", None, future))
 		return future
 
 	def get_user_by_id(self, user_id):
@@ -284,7 +284,7 @@ class ManifoldAPI():
 	 
 		future = Future()
 		
-		self._reads_queue.put(("/v0/user/by-id/{user_id}", "GET", None, future))
+		self._reads_queue.put((f"/v0/user/by-id/{user_id}", "GET", None, future))
 		return future
 
 	def get_me(self):
@@ -298,11 +298,11 @@ class ManifoldAPI():
 		'''
 
 		future = Future()
-  
+
 		self._reads_queue.put(("/v0/me", "GET", None, future))
 		return future
 
-	# Returns 500 error	
+	# Returns 500 error
 	# def get_groups(self):
 	# 	'''
 	# 	GET /v0/groups
@@ -313,9 +313,9 @@ class ManifoldAPI():
 	# 	availableToUserId: Optional. if specified, only groups that the user can join and groups they've already joined will be returned.
 	# 	Requires no authorization.
 	# 	'''
-	 
+
 	# 	future = Future()
-		
+
 	# 	self._reads_queue.put(("/v0/groups", "GET", None, future))
 	# 	return future
 
@@ -324,17 +324,17 @@ class ManifoldAPI():
 		GET /v0/group/[slug]
 
 		Gets a group by its slug.
-		
+
 		Note: group is singular in the URL.
 
 		:param str group_slug: Required. The slug of the group.
 		:return: A Future object representing the eventual result of the API call.
 		:rtype: Future
 		'''
-	 
+
 		future = Future()
-		
-		self._reads_queue.put(("/v0/group/{group_slug}", "GET", None, future))
+
+		self._reads_queue.put((f"/v0/group/{group_slug}", "GET", None, future))
 		return future
 
 	def get_group_by_id(self, group_id):
@@ -349,10 +349,10 @@ class ManifoldAPI():
 		'''
 	 
 		future = Future()
-		
-		self._reads_queue.put(("/v0/group/by-id/{group_id}", "GET", None, future))
+
+		self._reads_queue.put((f"/v0/group/by-id/{group_id}", "GET", None, future))
 		return future
- 
+
 	def get_group_markets_by_id(self, group_id):
 		'''
 		GET /v0/group/by-id/[id]/markets
@@ -364,12 +364,12 @@ class ManifoldAPI():
 		:rtype: Future
 		'''
 		future = Future()
-		
-		self._reads_queue.put(("/v0/group/by-id/{group_id}/markets", "GET", None, future))
+
+		self._reads_queue.put((f"/v0/group/by-id/{group_id}/markets", "GET", None, future))
 		return future
 
 	def get_markets(self, limit=500, before=None):
-	 
+
 		'''
 		GET /v0/markets
 
@@ -381,13 +381,13 @@ class ManifoldAPI():
 		:rtype: Future
 		'''
 		future = Future()
-		
+
 		params = {"limit": limit}
 		if before:
 			params["before"] = before
 		self._reads_queue.put(("/v0/markets", "GET", params, future))
 		return future
-	
+
 	def get_market_by_id(self, market_id):
 		'''
 		GET /v0/market/[marketId]
@@ -398,17 +398,17 @@ class ManifoldAPI():
 		:return: A Future object representing the eventual result of the API call.
 		:rtype: Future
 		'''
-	 
+
 		future = Future()
-		
-		self._reads_queue.put(("/v0/market/{market_id}", "GET", None, future))
+
+		self._reads_queue.put((f"/v0/market/{market_id}", "GET", None, future))
 		return future
 
 	def get_market_positions(self, market_id, order='profit', top=None, bottom=None, user_id=None):
 		'''
-		.. note:: 
+		.. note::
   			This API endpoint will break for markets with > 4650 positions. Setting either the top or bottom parameters is required to mitigate a 500 server error.
-			See https://github.com/manifoldmarkets/manifold/issues/2031 
+			See https://github.com/manifoldmarkets/manifold/issues/2031
 
 		GET /v0/market/[marketId]/positions
 
@@ -423,7 +423,7 @@ class ManifoldAPI():
 		:rtype: Future
 		'''
 		future = Future()
-		
+
 		params = {"order": order}
 		if top:
 			params["top"] = top
@@ -431,14 +431,14 @@ class ManifoldAPI():
 			params["bottom"] = bottom
 		if user_id:
 			params["userId"] = user_id
-   
-		self._reads_queue.put(("/v0/market/{market_id}/positions", "GET", params, future))
+
+		self._reads_queue.put((f"/v0/market/{market_id}/positions", "GET", params, future))
 		return future
 
 	def get_market_by_slug(self, market_slug):
 		'''
 		GET /v0/slug/[market_slug]
-	
+
 		Gets information about a single market by slug (the portion of the URL path after the username).
 
 		:param str market_slug: Required. The slug of the market.
@@ -446,37 +446,37 @@ class ManifoldAPI():
 		:rtype: Future
 		'''
 		future = Future()
-		self._reads_queue.put(("/v0/slug/{market_slug}", "GET", None, future))
+		self._reads_queue.put((f"/v0/slug/{market_slug}", "GET", None, future))
 		return future
 
 
-	def search_markets(self, term, sort=None, filter_state=None, contract_type=None, topic_slug=None, 
+	def search_markets(self, term, sort=None, filter_state=None, contract_type=None, topic_slug=None,
 					   creator_id=None, limit=None, offset=None, fuzzy=None):
 		'''
 		GET /v0/search-markets
 
 		Search or filter markets, similar to the browse page.
 
-		:param str term: 
+		:param str term:
 			Required. The search query in question. Can be an empty string.
-		:param str sort: 
+		:param str sort:
 			Optional. Sort order: score (default), newest, liquidity, or ... (see code).
-		:param str filter_state: 
+		:param str filter_state:
 			Optional. Closing state: all (default), open, closed, resolved, closing-this-month, or closing-next-month.
-		:param str contract_type: 
+		:param str contract_type:
 			Optional. Type of contract: ALL (default), BINARY (yes/no), MULTIPLE_CHOICE, BOUNTY, POLL, or ... (see code).
-		:param str topic_slug: 
+		:param str topic_slug:
 			Optional. Only include questions with the topic tag with this slug.
-		:param str creator_id: 
+		:param str creator_id:
 			Optional. Only include questions created by the user with this id.
-		:param int limit: 
+		:param int limit:
 			Optional. Number of contracts to return from 0 to 1000. Default 100.
-		:param int offset: 
+		:param int offset:
 			Optional. Number of contracts to skip. Use with limit to paginate the results.
-		:param bool fuzzy: 
+		:param bool fuzzy:
 			Optional. If set to any value, uses fuzzier string matching.
 
-		:return: 
+		:return:
 			A Future object representing the eventual result of the API call.
 		:rtype: Future
 		'''
@@ -518,12 +518,12 @@ class ManifoldAPI():
 		future = Future()
 		params = {}
 		if limit:
-			params["limit"] = limit 
+			params["limit"] = limit
 		if before:
 			params["before"] = before
-   
+
 		self._reads_queue.put(("/v0/users", "GET", params, future))
-		return future	
+		return future
 
 	def make_bet(self, amount, contract_id, outcome, limit_prob=None, expires_at=None):
 		'''
@@ -534,23 +534,23 @@ class ManifoldAPI():
 		:param float amount:
 			Required. The amount to bet, in mana, before fees.
 		:param str contract_id:
-			Required. The ID of the contract (market) to bet on. 
+			Required. The ID of the contract (market) to bet on.
 		:param str outcome:
 			Required. The outcome to bet on. The outcome type is market-specific:
-			
+
 			- For binary markets: "YES" or "NO"
 			- For free-response markets: ID of the free response answer
 			- For numeric markets: String representing the target bucket
-			
+
 		:param float limit_prob:
-			Optional. A number between 0.01 and 0.99 inclusive representing the limit probability for your bet. 
-			
+			Optional. A number between 0.01 and 0.99 inclusive representing the limit probability for your bet.
+
 			- For example, if the current market probability is 50%:
 				- A M$10 bet on "YES" with ``limitProb=0.4`` would not be filled until the market probability moves down to 40%.
 				- A M$100 bet on "YES" with ``limitProb=0.6`` would fill partially or completely depending on current market conditions.
-				
+
 			Any remaining unfilled bet will remain as an open offer for future matches.
-			
+
 		:param int expires_at:
 			Optional. A Unix timestamp (in milliseconds) at which the limit bet should be automatically canceled.
 
@@ -572,9 +572,9 @@ class ManifoldAPI():
 			params["limitProb"] = limit_prob
 		if expires_at:
 			params["expiresAt"] = expires_at
-   
+
 		self._bets_queue.put(("/v0/bet", "POST", params, future))
-		return future	
+		return future
 
 	def cancel_bet(self, bet_id):
 		'''
@@ -582,14 +582,14 @@ class ManifoldAPI():
 
 		Cancels the limit order of a bet with the specified id.
 
-		:param str bet_id: 
+		:param str bet_id:
 			Required. The unique identifier for the bet to be cancelled.
-			
+
 		:return:
 			A Future object representing the eventual result of the API call.
 		:rtype: Future
 
-		.. note:: 
+		.. note::
 			This action is irreversible.
 
 		**Examples**
@@ -599,7 +599,7 @@ class ManifoldAPI():
 			cancel_bet("betId123")
 		'''
 		future = Future()
-		self._bets_queue.put(("/v0/bet/cancel/{bet_id}", "POST", None, future))
+		self._bets_queue.put((f"/v0/bet/cancel/{bet_id}", "POST", None, future))
 		return future
 
 	def create_market(self, outcome_type, question, description=None, close_time=None, visibility=None, group_id=None, initial_prob=None, min=None, max=None, is_log_scale=None, initial_value=None, answers=None):
@@ -651,12 +651,12 @@ class ManifoldAPI():
 
 		Adds liquidity to a specific market.
 
-		:param str market_id: 
+		:param str market_id:
 			The ID of the market. This parameter is required.
-		:param float amount: 
+		:param float amount:
 			The amount of liquidity to be added. This parameter is required.
 
-		:return: 
+		:return:
 			A Future object representing the eventual result of the API call.
 
 		:rtype: Future
@@ -669,24 +669,24 @@ class ManifoldAPI():
 		'''
 		future = Future()
 		params = {"amount": amount}
-		self._bets_queue.put(("/v0/market/{market_id}/add-liquidity", "POST", params, future))
+		self._bets_queue.put((f"/v0/market/{market_id}/add-liquidity", "POST", params, future))
 		return future
 
 	def close_market(self, market_id, close_time=None):
 		'''
 		POST /v0/market/[marketId]/close
-		
+
 		Closes a market on behalf of the authorized user.
-		
-		:param str market_id: 
+
+		:param str market_id:
 			The unique identifier for the market to be closed. This parameter is required.
-		:param int close_time: 
+		:param int close_time:
 			Optional. Milliseconds since the epoch to close the market at. If not provided, the market will be closed immediately. Cannot provide close time in the past.
-		:return: 
+		:return:
 			A Future object representing the eventual result of the API call.
 
 		:rtype: Future
-		
+
 		**Examples**
 
 		.. code-block:: python
@@ -697,7 +697,7 @@ class ManifoldAPI():
 		future = Future()
 		params = {}
 		if close_time: params["closeTime"] = close_time
-		self._bets_queue.put(("/v0/market/{market_id}/close", "POST", params, future))
+		self._bets_queue.put((f"/v0/market/{market_id}/close", "POST", params, future))
 		return future
 
 	def manage_group_market(self, market_id, group_id, remove=None):
@@ -709,7 +709,7 @@ class ManifoldAPI():
 		:param str market_id: Required. The ID of the market.
 		:param str group_id: Required. The ID of the group. Must be an admin, moderator, or creator of the group if curated/private. Must be the market creator or trustworthy-ish if the group is public.
 		:param bool remove: Optional. Set to true to remove the market from the group.
-		
+
 		:return: A Future object representing the eventual result of the API call.
 		:rtype: Future
 
@@ -731,17 +731,17 @@ class ManifoldAPI():
 
 		Resolves a market on behalf of the authorized user.
 
-		:param str market_id: 
+		:param str market_id:
 			Required. The ID of the market.
 
-		:param str outcome: 
+		:param str outcome:
 			Required. Outcome varies based on the type of market.
-			
+
 			- For binary markets: One of "YES", "NO", "MKT", or "CANCEL".
 			- For free response or multiple choice markets: One of "MKT", "CANCEL", or a number indicating the answer index.
 			- For numeric markets: One of "CANCEL", or a number indicating the selected numeric bucket ID.
 
-		:param int probability_int: 
+		:param int probability_int:
 			Optional. The probability to use for MKT resolution in binary markets.
 			Also, required if `value` is present in numeric markets.
 
@@ -749,12 +749,12 @@ class ManifoldAPI():
 			Optional. An array of {answer, pct} objects to use as the weights for resolving in favor of multiple free response options.
 			Can only be set with "MKT" outcome. Note that the total weights must add to 100.
 
-		:param int value: 
+		:param int value:
 			Optional. The value that the market resolves to in numeric markets.
 
-		:raises ValueError: 
+		:raises ValueError:
 			If the total weights in `resolutions` do not add up to 100.
-			
+
 		**Examples**
 
 		.. code-block:: python
@@ -768,7 +768,7 @@ class ManifoldAPI():
 		if resolutions: params["resolutions"] = resolutions
 		if value: params["value"] = value
 
-		self._bets_queue.put(("/v0/market/{market_id}/resolve", "POST", params, future))
+		self._bets_queue.put((f"/v0/market/{market_id}/resolve", "POST", params, future))
 		return future
 
 	def sell_shares(self, market_id, outcome=None, shares=None):
@@ -780,7 +780,7 @@ class ManifoldAPI():
 		:param str market_id: The unique identifier for the binary market where shares are being sold. This parameter is required.
 		:param str outcome: Optional. Specifies the outcome for which shares are being sold. Can be "YES" or "NO".
 		:param float shares: Optional. The amount of shares to sell for the given outcome. If not provided, all shares owned will be sold.
-		
+
 		:return: A Future object representing the eventual result of the API call.
 		:rtype: Future
 
@@ -796,13 +796,13 @@ class ManifoldAPI():
 			params["outcome"] = outcome
 		if shares:
 			params["shares"] = shares
-		self._bets_queue.put(("/v0/market/{market_id}/sell", "POST", params, future))
+		self._bets_queue.put((f"/v0/market/{market_id}/sell", "POST", params, future))
 		return future
 
 	def create_comment(self, contract_id, content=None, html=None, markdown=None):
 		'''
 		POST /v0/comment
-		
+
 		Creates a comment in the specified market.
 
 		:param str contract_id:
@@ -822,7 +822,7 @@ class ManifoldAPI():
 		:return:
 			A Future object representing the eventual result of the API call.
 		:rtype: Future
-		
+
 		.. note::
 		   You should provide either `content`, `html`, or `markdown` but not multiple at the same time. They are mutually exclusive.
 
@@ -848,7 +848,7 @@ class ManifoldAPI():
 	def get_comments(self, contract_id=None, contract_slug=None):
 		'''
 		GET /v0/comments
-		
+
 		Gets a list of comments for a contract.
 
 		:param str contract_id: Optional. The ID of the contract to read comments for.
@@ -884,21 +884,21 @@ class ManifoldAPI():
 
 		Retrieves a list of bets, sorted by their creation date in descending order.
 
-		:param str user_id: 
+		:param str user_id:
 			Optional. If provided, returns only bets created by the user with this ID.
-		:param str username: 
+		:param str username:
 			Optional. If provided, returns only bets created by the user with this username.
-		:param str contract_id: 
+		:param str contract_id:
 			Optional. If provided, returns only bets associated with this contract ID.
-		:param str contract_slug: 
+		:param str contract_slug:
 			Optional. If provided, returns only bets associated with this contract slug.
-		:param int limit: 
+		:param int limit:
 			Optional. The number of bets to return. Defaults to and maxes out at 1000.
-		:param str before: 
-			Optional. Specifies the ID of the bet to start the list from, effectively functioning as an offset. 
+		:param str before:
+			Optional. Specifies the ID of the bet to start the list from, effectively functioning as an offset.
 			For instance, after requesting the 10 most recent bets, supplying the ID of the 10th bet in a new query would yield bets 11 through 20.
-			
-		:return: 
+
+		:return:
 			A Future object representing the eventual result of the API call.
 		:rtype: Future
 		'''
@@ -925,18 +925,18 @@ class ManifoldAPI():
 
 		Retrieves a list of managrams, ordered by their creation time in descending order.
 
-		:param str to_id: 
+		:param str to_id:
 			Optional. Returns managrams sent to this user.
-		:param str from_id: 
+		:param str from_id:
 			Optional. Returns managrams sent from this user.
-		:param int limit: 
+		:param int limit:
 			Optional. How many managrams to return. The maximum and the default are 100.
-		:param str before: 
+		:param str before:
 			Optional. Specifies the createdTime before which you want managrams.
-		:param str after: 
+		:param str after:
 			Optional. Specifies the createdTime after which you want managrams.
 
-		:return: 
+		:return:
 			A Future object representing the eventual result of the API call.
 		:rtype: Future
 		'''
@@ -961,14 +961,14 @@ class ManifoldAPI():
 
 		Send a managram to another user.
 
-		:param list[str] to_ids: 
+		:param list[str] to_ids:
 			Required. An array of user ids to send managrams to.
-		:param int amount: 
+		:param int amount:
 			Required. The amount of mana (must be >= 10) to send to each user.
-		:param str message: 
+		:param str message:
 			Optional. A message to include with the managram.
 
-		:return: 
+		:return:
 			A Future object representing the eventual result of the API call.
 		:rtype: Future
 		'''
